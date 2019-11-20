@@ -1,5 +1,6 @@
 body {
-  font-family: 'Comfortaa', cursive; }
+  font-family: 'Comfortaa', cursive;
+  text-decoration: none; }
 
 a {
   text-decoration: none;
@@ -11,6 +12,25 @@ a {
     display: block;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.typewrite {
+   color:#fff; text-decoration: none;
+   position: absolute;
+   margin-top: 500px;
+  margin-left: 330px; 
+  font-weight: bold;
+    
+}
+
+#title{
+  margin: auto;
+  display: block;
+  width: 70%;
+}
+
+#title h1 {
+  font-size: 50px;
 }
 
 nav {
@@ -148,6 +168,7 @@ h3 {
 
 #ottDesc {
   margin: auto;
+    display: block;
   width: 50%; }
 
 button {
@@ -156,16 +177,64 @@ button {
     padding: 20px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     font-size: 20px;
     margin: 4px 2px;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 10px;
     margin: auto;
+    display: block;
+    margin-bottom: 30px;
+    width: 300px;
   }
 
   button a{
     color: white;
   }
+
+  button a:hover {
+    opacity: 0.5;
+  }
+
+
+  #partnerPage {
+    margin: auto;
+    display: block;
+    padding: 10px;
+    width: 80%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  .partner {
+    width: 15%;
+    margin-right: 40px;
+    
+  }
+
+
+  footer {
+    height: 200px;
+    background-color: #16161d;
+    padding: 20px;
+  }
+
+  footer img {
+    width: 8%;
+    margin: auto;
+    display: block;
+  }
+
+  footer p {
+    color: #C94030;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  footer a:hover {
+    opacity: 0.5;
+  }
+
+
+
 
 /*# sourceMappingURL=main.css.map */

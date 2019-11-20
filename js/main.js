@@ -1,107 +1,56 @@
-Node.prototype.nextNode = function() {
-    var cur = this;
-    while (cur = cur.nextSibling) {
-        if (cur.nodeType === 1 && !cur.classList.contains('fakeContent')) {
-            return cur;
+var TxtType = function(el, toRotate, period) {
+    this.toRotate = toRotate;
+    this.el = el;
+    this.loopNum = 0;
+    this.period = parseInt(period, 10) || 2000;
+    this.txt = '';
+    this.tick();
+    this.isDeleting = false;
+};
+
+TxtType.prototype.tick = function() {
+    var i = this.loopNum % this.toRotate.length;
+    var fullTxt = this.toRotate[i];
+
+    if (this.isDeleting) {
+    this.txt = fullTxt.substring(0, this.txt.length - 1);
+    } else {
+    this.txt = fullTxt.substring(0, this.txt.length + 1);
+    }
+
+    this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+    var that = this;
+    var delta = 200 - Math.random() * 100;
+
+    if (this.isDeleting) { delta /= 2; }
+
+    if (!this.isDeleting && this.txt === fullTxt) {
+    delta = this.period;
+    this.isDeleting = true;
+    } else if (this.isDeleting && this.txt === '') {
+    this.isDeleting = false;
+    this.loopNum++;
+    delta = 500;
+    }
+
+    setTimeout(function() {
+    that.tick();
+    }, delta);
+};
+
+window.onload = function() {
+    var elements = document.getElementsByClassName('typewrite');
+    for (var i=0; i<elements.length; i++) {
+        var toRotate = elements[i].getAttribute('data-type');
+        var period = elements[i].getAttribute('data-period');
+        if (toRotate) {
+          new TxtType(elements[i], JSON.parse(toRotate), period);
         }
     }
-    return null;
+    // INJECT CSS
+    var css = document.createElement("style");
+    css.type = "text/css";
+    css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid #fff}";
+    document.body.appendChild(css);
 };
-
-Node.prototype.firstNode = function() {
-    var cur = this.firstChild;
-    if (cur.nodeType === 1) {
-        return cur;
-    }
-    else {
-        return cur.nextNode();
-    }
-};
-
-Element.prototype.typeAndDelete = function(options) {
-    options = options || {};
-
-    var contentList = this,
-        curContent = contentList.getElementsByClassName('active')[0] || contentList.firstNode();
-
-    // default options
-    var selectTimePerWord = options.selectTimePerWord || 100,
-        typeTimePerWord = options.typeTimePerWord || 150,
-        delayAfterSelect = options.delayAfterSelect || 500,
-        delayAfterDelete = options.delayAfterDelete || 1000,
-        delayBetweenWords = options.delayBetweenWords || 3000;
-
-    // create fake content
-    var fakeContent = contentList.getElementsByClassName('fakeContent')[0];
-    if (!fakeContent) {
-        fakeContent = document.createElement('span');
-        fakeContent.classList.add('fakeContent');
-        fakeContent.classList.add('selecting');
-        contentList.appendChild(fakeContent);
-    }
-
-    // selecting handler
-    var selecting = function() {
-        // initial fake content with the same text
-        fakeContent.innerHTML = curContent.innerHTML;
-
-        // start selecting
-        var selectingAnimation = setInterval(function() {
-            fakeContent.innerHTML = fakeContent.innerHTML.substring(0, fakeContent.innerHTML.length - 1);
-            if (fakeContent.innerHTML.length <= 0) {
-                clearInterval(selectingAnimation);
-
-                deleting();
-            }
-        }, selectTimePerWord);
-    };
-
-    // deleting handler
-    var deleting = function() {
-        // delay, delete, and switch to the next content
-        setTimeout(function() {
-            fakeContent.classList.remove('selecting');
-            fakeContent.classList.add('typing');
-            curContent.classList.remove('active');
-
-            curContent = curContent.nextNode() ? curContent.nextNode() : contentList.firstNode();
-            curContent.classList.add('typing');
-            curContent.classList.add('active');
-        }, delayAfterSelect);
-
-        // delay and start typing
-        setTimeout(function() {
-            typing();
-        }, delayAfterDelete);
-    };
-
-    // typing handler
-    var typing = function() {
-        // delete fake content
-        fakeContent.innerHTML = "";
-
-        // start typing
-        var typingAnimation = setInterval(function() {
-            fakeContent.innerHTML = curContent.innerHTML.substring(0, fakeContent.innerHTML.length + 1);
-
-            // stop typing
-            if (fakeContent.innerHTML.length >= curContent.innerHTML.length) {
-                fakeContent.classList.remove('typing');
-                clearInterval(typingAnimation);
-
-                // delay between words
-                setTimeout(function() {
-                    curContent.classList.remove('typing');
-                    fakeContent.classList.add('selecting');
-                    selecting();
-                }, delayBetweenWords);
-            }
-        }, typeTimePerWord);
-    };
-
-    return selecting();
-};
-
-document.getElementById('content').typeAndDelete({
-  delayAfterDelete: 500
-});
